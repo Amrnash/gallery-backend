@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const userRoutes = require("./routes/user");
 const app = express();
 const User = require("./models/User");
@@ -6,15 +7,15 @@ const cors = require("cors");
 require("./config/db");
 app.use(express.json());
 app.use(cors());
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads/userUploads"))
+);
 app.use("/api/user", userRoutes);
-app.get("/", async (req, res) => {
-  const user = await User.findOne({ email: "amrnashaat4@gmail.com" });
-  res.send(user);
-});
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   res.status(500);
   throw new Error(err);
 });
 app.listen(7000, () => {
-  console.log("server is running on 5000");
+  console.log("server is running on 7000");
 });

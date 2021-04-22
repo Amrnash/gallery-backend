@@ -10,7 +10,8 @@ const userSignup = async (req, res, next) => {
     if (emailExists) {
       throw new Error("Email already exists");
     }
-    const avatar = fs.readFileSync(req.file.path);
+    const avatar = fs.readFileSync(req.file.path).toString("base64");
+    console.log(avatar);
     const user = await User.create({ name, email, password, avatar });
     const token = jwt.sign({ id: user._id }, "mysecret", { expiresIn: "30d" });
     res.status(201).json({ user, token });
@@ -38,12 +39,26 @@ const userLogin = async (req, res, next) => {
     next(error);
   }
 };
+const getUserById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+    if (!user) {
+      throw new Error("invalid id");
+    }
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+};
 const uploadImage = async (req, res, next) => {
   try {
-    await User.updateOne(
+    console.log(req.file);
+    const updatedUser = await User.updateOne(
       { _id: req.user._id },
       { $push: { images: [req.file.path] } }
     );
+    res.send(updatedUser);
   } catch (error) {
     next(error);
   }
@@ -52,4 +67,5 @@ module.exports = {
   userSignup,
   userLogin,
   uploadImage,
+  getUserById,
 };

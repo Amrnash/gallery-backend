@@ -26,13 +26,14 @@ const userSchema = mongoose.Schema(
     },
     bio: {
       type: String,
+      required: false,
     },
     images: [{ type: String }],
     avatar: {
       type: Buffer,
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 userSchema.pre("save", async function (next) {
