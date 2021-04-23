@@ -9,7 +9,11 @@ const auth = async (req, res, next) => {
     ) {
       const token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, "mysecret");
-      req.user = await User.findById(decoded.id);
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        throw new Error("invalid token");
+      }
+      req.user = user;
       next();
     }
   } catch (error) {

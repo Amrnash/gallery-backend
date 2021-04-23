@@ -53,7 +53,7 @@ const getUserById = async (req, res, next) => {
 };
 const uploadImage = async (req, res, next) => {
   try {
-    console.log(req.file);
+    console.log(req.user);
     const updatedUser = await User.updateOne(
       { _id: req.user._id },
       { $push: { images: [req.file.path] } }
@@ -63,9 +63,19 @@ const uploadImage = async (req, res, next) => {
     next(error);
   }
 };
+const getUserImages = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const images = await User.findById(id).select("images");
+    res.send(images);
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   userSignup,
   userLogin,
   uploadImage,
   getUserById,
+  getUserImages,
 };

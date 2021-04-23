@@ -5,6 +5,7 @@ const {
   userLogin,
   uploadImage,
   getUserById,
+  getUserImages,
 } = require("../controllers/user");
 const auth = require("../middlewares/auth");
 
@@ -14,6 +15,7 @@ const uploadUserImages = multerConfig("userUploads");
 const router = express.Router();
 router.post("/signup", uploadProfiles.single("avatar"), userSignup);
 router.post("/login", userLogin);
+router.get("/user-uploads/:id", auth, getUserImages);
 router.get("/:id", getUserById);
 // upload photo route for authenticated users
 router.put("/upload", auth, uploadUserImages.single("upload"), uploadImage);
