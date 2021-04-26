@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Image = require("../models/Image");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -52,12 +53,13 @@ const getUserById = async (req, res, next) => {
 };
 const uploadImage = async (req, res, next) => {
   try {
-    console.log(req.user);
-    const updatedUser = await User.updateOne(
-      { _id: req.user._id },
-      { $push: { images: [req.file.path] } }
-    );
-    res.send(updatedUser);
+    // const updatedUser = await User.updateOne(
+    //   { _id: req.user._id },
+    //   { $push: { images: [req.file.path] } }
+    // );
+    const image = new Image({ user: req.user._id, imagePath: req.file.path });
+    await image.save();
+    res.send(image);
   } catch (error) {
     next(error);
   }

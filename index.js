@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const userRoutes = require("./routes/user");
+const imageRoutes = require("./routes/image");
 const app = express();
 const morgan = require("morgan");
 
@@ -14,6 +15,7 @@ app.use(
   express.static(path.join(__dirname, "uploads/userUploads"))
 );
 app.use("/api/user", userRoutes);
+app.use("/api/image", imageRoutes);
 app.use((err, req, res, next) => {
   res.status(500);
   throw new Error(err);
