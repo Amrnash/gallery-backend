@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const auth = async (req, res, next) => {
-  console.log(req.headers.authorization);
+  console.log("auth: ", req.headers.authorization);
   try {
     if (
       req.headers.authorization &&
@@ -15,6 +15,8 @@ const auth = async (req, res, next) => {
       }
       req.user = user;
       next();
+    } else {
+      throw new Error("invalid token");
     }
   } catch (error) {
     res.status(401);

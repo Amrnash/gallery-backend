@@ -2,9 +2,11 @@ const express = require("express");
 const path = require("path");
 const userRoutes = require("./routes/user");
 const app = express();
-const User = require("./models/User");
+const morgan = require("morgan");
+
 const cors = require("cors");
 require("./config/db");
+app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
 app.use(
