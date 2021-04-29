@@ -1,18 +1,18 @@
 const User = require("../models/User");
+const Image = require("../models/Image");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const userSignup = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, bio } = req.body;
     // check if email exists
     const emailExists = (await User.findOne({ email })) ? true : false;
     if (emailExists) {
       throw new Error("Email already exists");
     }
     const avatar = fs.readFileSync(req.file.path).toString("base64");
-    console.log(avatar);
-    const user = await User.create({ name, email, password, avatar });
+    const user = await User.create({ name, email, password, avatar, bio });
     const token = jwt.sign({ id: user._id }, "mysecret", { expiresIn: "30d" });
     res.status(201).json({ user, token });
   } catch (err) {
@@ -53,12 +53,13 @@ const getUserById = async (req, res, next) => {
 };
 const uploadImage = async (req, res, next) => {
   try {
-    console.log(req.user);
-    const updatedUser = await User.updateOne(
-      { _id: req.user._id },
-      { $push: { images: [req.file.path] } }
-    );
-    res.send(updatedUser);
+    // const updatedUser = await User.updateOne(
+    //   { _id: req.user._id },
+    //   { $push: { images: [req.file.path] } }
+    // );
+    const image = new Image({ user: req.user._id, imagePath: req.file.path });
+    await image.save();
+    res.send(image);
   } catch (error) {
     next(error);
   }
