@@ -67,7 +67,7 @@ const getUserImages = async (req, res, next) => {
   try {
     const id = req.params.id;
     const images = await User.findById(id).select("images");
-    res.send(images);
+    res.status(200).send(images);
   } catch (error) {
     next(error);
   }
