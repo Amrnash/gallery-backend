@@ -5,8 +5,8 @@ const getAllImages = async (req, res, next) => {
     const limit = req.query.limit;
     const skip = req.query.skip;
     const images = await Image.find({})
-      .limit(limit)
-      .skip(skip)
+      .limit(Number(limit))
+      .skip(Number(skip))
       .sort({ created: -1 });
     res.send(images);
   } catch (error) {
@@ -17,6 +17,18 @@ const getUserImage = async (req, res, next) => {
   try {
     const images = await Image.find({ user: req.user._id });
     res.send(images);
+  } catch (error) {
+    next(error);
+  }
+};
+const downloadImage = async (req, res, next) => {
+  try {
+    const imageDoc = await Image.findById(req.params.id);
+    const imagePath = imageDoc.imagePath;
+    res.set({
+      "Content-Type": "image/jpeg",
+    });
+    res.sendFile(imagePath);
   } catch (error) {
     next(error);
   }
@@ -37,4 +49,4 @@ const removeUserImage = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllImages, getUserImage, removeUserImage };
+module.exports = { getAllImages, getUserImage, removeUserImage, downloadImage };
