@@ -2,13 +2,19 @@ const Image = require("../models/Image");
 const fs = require("fs");
 const getAllImages = async (req, res, next) => {
   try {
-    const limit = req.query.limit;
-    const skip = req.query.skip;
+    // default page size
+    const pageSize = 10;
+    // the current page we are on
+    const page = Number(req.query.pageNumber) || 1;
+    // the total number of image documents in DB
+    const count = await Image.countDocuments();
+    // query the DB for images
     const images = await Image.find({})
-      .limit(Number(limit))
-      .skip(Number(skip))
+      .limit(pageSize)
+      .skip(pageSize * (page - 1))
       .sort({ created: -1 });
-    res.send(images);
+    // send the images along with current page and total number of pages
+    res.json({ images, page, pages: Math.ceil(count / pageSize) });
   } catch (error) {
     next(error);
   }

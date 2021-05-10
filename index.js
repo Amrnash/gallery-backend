@@ -14,8 +14,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads/")));
 app.use("/api/user", userRoutes);
 app.use("/api/image", imageRoutes);
 app.use((err, req, res, next) => {
-  res.status(500);
-  throw new Error(err);
+  res.status(500).json({ message: err.message });
 });
 app.listen(7000, () => {
   console.log("server is running on 7000");
